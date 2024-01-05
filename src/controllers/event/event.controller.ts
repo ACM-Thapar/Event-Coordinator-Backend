@@ -54,7 +54,6 @@ class EventController implements Controller {
   ) => {
     try {
       const id = request.params.id;
-      console.log(id);
       const eventData: Event = request.body;
       const updatedEvent = await this.event.findByIdAndUpdate(id, eventData, {
         new: true,
