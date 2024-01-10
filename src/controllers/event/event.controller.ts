@@ -13,11 +13,28 @@ class EventController implements Controller {
   }
 
   private initializeRoutes() {
+    this.router.get(this.path + "/top",this.getAllDashboardEvents)
     this.router.get(this.path, this.getAllEvents);
     this.router.post(this.path, this.createEvent);
     this.router.put(`${this.path}/:id`, this.updateEvent);
     this.router.delete(`${this.path}/:id`, this.deleteEvent);
   }
+
+  private getAllDashboardEvents = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const dashboard_events = await this.event.find({},{title:true,organizer:true,event_start:true,event_end:true,event_venue:true,event_startTime:true,event_endTime:true,page_link:true});
+      response.send(dashboard_events);
+    } catch (error) {
+        return response.status(400).json({
+            status:"400",
+            message:"Unable to Fetch the Dashboard Events"
+        })
+    }
+  };
 
   private getAllEvents = async (
     request: Request,
@@ -25,7 +42,7 @@ class EventController implements Controller {
     next: NextFunction
   ) => {
     try {
-      const events = await this.event.find();
+      const events = await this.event.find({},{event_venue:false,event_startTime:false,event_endTime:false,page_link:false});
       response.send(events);
     } catch (error) {
       next(error);
